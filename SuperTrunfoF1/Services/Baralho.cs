@@ -4,7 +4,9 @@ namespace SuperTrunfoF1.Services
 {
     public class Baralho
     {
-        public List<Piloto> Cartas { get; set; }
+        private static readonly Random rng = new Random();
+
+        public List<Piloto> Cartas { get; private set; }
 
         public Baralho()
         {
@@ -37,15 +39,17 @@ namespace SuperTrunfoF1.Services
                 new Piloto("Liam Lawson", "RB", 2, 0, 0, 0, 0),
                 new Piloto("Oliver Bearman", "Haas", 1, 0, 1, 0, 0),
 
-                // 🏆 SUPER TRUNFO
                 new Piloto("Ayrton Senna", "Lenda", 10, 41, 80, 65, 3, true)
             };
         }
 
         public void Embaralhar()
         {
-            Random rng = new Random();
-            Cartas = Cartas.OrderBy(x => rng.Next()).ToList();
+            for (int i = Cartas.Count - 1; i > 0; i--)
+            {
+                int j = rng.Next(i + 1);
+                (Cartas[i], Cartas[j]) = (Cartas[j], Cartas[i]);
+            }
         }
     }
 }

@@ -4,17 +4,26 @@ namespace SuperTrunfoF1.Models
 {
     public class Piloto
     {
-        public string Nome { get; set; }
-        public string Equipe { get; set; }
-        public int Experiencia { get; set; }
-        public int Vitorias { get; set; }
-        public int Podios { get; set; }
-        public int PolePositions { get; set; }
-        public int Titulos { get; set; }
-        public bool EhSuperTrunfo { get; set; }
+        public string Nome { get; private set; }
+        public string Equipe { get; private set; }
+        public int Experiencia { get; private set; }
+        public int Vitorias { get; private set; }
+        public int Podios { get; private set; }
+        public int PolePositions { get; private set; }
+        public int Titulos { get; private set; }
+        public bool EhSuperTrunfo { get; private set; }
 
         public Piloto(string nome, string equipe, int experiencia, int vitorias, int podios, int polePositions, int titulos, bool ehSuperTrunfo = false)
         {
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new ArgumentException("Nome inválido.");
+
+            if (string.IsNullOrWhiteSpace(equipe))
+                throw new ArgumentException("Equipe inválida.");
+
+            if (experiencia < 0 || vitorias < 0 || podios < 0 || polePositions < 0 || titulos < 0)
+                throw new ArgumentException("Os atributos não podem ser negativos.");
+
             Nome = nome;
             Equipe = equipe;
             Experiencia = experiencia;
@@ -34,7 +43,7 @@ namespace SuperTrunfoF1.Models
                 Atributo.Podios => Podios,
                 Atributo.PolePositions => PolePositions,
                 Atributo.Titulos => Titulos,
-                _ => 0
+                _ => throw new ArgumentException("Atributo inválido.")
             };
         }
 
