@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="SuperTrunfoF1.Tests/SuperTrunfoF1.Tests.csproj" />
   <Project Path="SuperTrunfoF1/SuperTrunfoF1.csproj" />
 </Solution>
