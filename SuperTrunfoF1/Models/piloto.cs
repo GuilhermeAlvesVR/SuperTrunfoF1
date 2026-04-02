@@ -4,14 +4,14 @@ namespace SuperTrunfoF1.Models
 {
     public class Piloto
     {
-        public string Nome { get; private set; }
-        public string Equipe { get; private set; }
-        public int Experiencia { get; private set; }
-        public int Vitorias { get; private set; }
-        public int Podios { get; private set; }
-        public int PolePositions { get; private set; }
-        public int Titulos { get; private set; }
-        public bool EhSuperTrunfo { get; private set; }
+        public string Nome { get; }
+        public string Equipe { get; }
+        public int Experiencia { get; }
+        public int Vitorias { get; }
+        public int Podios { get; }
+        public int PolePositions { get; }
+        public int Titulos { get; }
+        public bool EhSuperTrunfo { get; }
 
         public Piloto(string nome, string equipe, int experiencia, int vitorias, int podios, int polePositions, int titulos, bool ehSuperTrunfo = false)
         {
@@ -54,9 +54,7 @@ namespace SuperTrunfoF1.Models
             Console.WriteLine($"Equipe: {Equipe}");
 
             if (EhSuperTrunfo)
-            {
-                Console.WriteLine("Carta Super Trunfo!");
-            }
+               Console.WriteLine("Carta Super Trunfo!");
 
             Console.WriteLine($"1 - Experiência: {Experiencia}");
             Console.WriteLine($"2 - Vitórias: {Vitorias}");

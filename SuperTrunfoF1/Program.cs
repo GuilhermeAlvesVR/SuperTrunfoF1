@@ -6,12 +6,11 @@ namespace SuperTrunfoF1
     {
         static void Main(string[] args)
         {
-            Jogo jogo = new Jogo();
-
             do
             {
                 try
                 {
+                    Jogo jogo = new Jogo();
                     jogo.Iniciar();
                 }
                 catch (Exception ex)

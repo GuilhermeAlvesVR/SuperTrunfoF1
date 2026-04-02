@@ -18,9 +18,7 @@ namespace SuperTrunfoF1.Services
 
         public void Iniciar()
         {
-            ReiniciarEstadoDoJogo();
-
-            if (Baralho == null || Baralho.Cartas == null || Baralho.Cartas.Count == 0)
+            if (Baralho.Cartas.Count == 0)
                 throw new InvalidOperationException("O baralho não foi inicializado corretamente.");
 
             Baralho.Embaralhar();
@@ -33,19 +31,10 @@ namespace SuperTrunfoF1.Services
             ExibirResultadoFinal();
         }
 
-        private void ReiniciarEstadoDoJogo()
-        {
-            Usuario.Resetar();
-            Computador.Resetar();
-        }
-
         private void DistribuirCartas()
         {
-            if (Baralho == null || Baralho.Cartas == null)
-                throw new InvalidOperationException("Baralho inválido.");
-
             if (Baralho.Cartas.Count < 2)
-                throw new InvalidOperationException("Não há cartas suficientes para iniciar o jogo.");
+                throw new InvalidOperationException("Não há cartas suficientes.");
 
             for (int i = 0; i < Baralho.Cartas.Count; i++)
             {
@@ -58,12 +47,6 @@ namespace SuperTrunfoF1.Services
 
         private void JogarRodadas()
         {
-            if (Usuario.Cartas.Count == 0 || Computador.Cartas.Count == 0)
-                throw new InvalidOperationException("Os jogadores não possuem cartas para jogar.");
-
-            if (Usuario.Cartas.Count != Computador.Cartas.Count)
-                throw new InvalidOperationException("Os jogadores possuem quantidades diferentes de cartas.");
-
             int totalRodadas = Usuario.Cartas.Count;
 
             for (int i = 0; i < totalRodadas; i++)
@@ -71,22 +54,19 @@ namespace SuperTrunfoF1.Services
                 Console.Clear();
                 Console.WriteLine($"========== RODADA {i + 1} ==========\n");
 
-                Piloto cartaUsuario = Usuario.Cartas[i];
-                Piloto cartaComputador = Computador.Cartas[i];
-
-                if (cartaUsuario == null || cartaComputador == null)
-                    throw new InvalidOperationException("Foi encontrada uma carta nula durante a rodada.");
+                var cartaUsuario = Usuario.Cartas[i];
+                var cartaComputador = Computador.Cartas[i];
 
                 Console.WriteLine("Sua carta:");
                 cartaUsuario.ExibirCarta();
 
-                Atributo atributoEscolhido = EscolherAtributo();
+                var atributo = EscolherAtributo();
 
-                Console.WriteLine($"\nVocê escolheu: {atributoEscolhido}");
+                Console.WriteLine($"\nVocê escolheu: {atributo}");
                 Console.WriteLine("\nCarta do computador:");
                 cartaComputador.ExibirCarta();
 
-                int resultado = CompararCartas(cartaUsuario, cartaComputador, atributoEscolhido);
+                int resultado = CompararCartas(cartaUsuario, cartaComputador, atributo);
 
                 if (resultado > 0)
                 {
@@ -139,12 +119,6 @@ namespace SuperTrunfoF1.Services
 
         public int CompararCartas(Piloto usuario, Piloto computador, Atributo atributo)
         {
-            if (usuario == null)
-                throw new ArgumentNullException(nameof(usuario), "A carta do usuário não pode ser nula.");
-
-            if (computador == null)
-                throw new ArgumentNullException(nameof(computador), "A carta do computador não pode ser nula.");
-
             if (usuario.EhSuperTrunfo && computador.EhSuperTrunfo)
                 return 0;
 
@@ -154,10 +128,8 @@ namespace SuperTrunfoF1.Services
             if (computador.EhSuperTrunfo)
                 return -1;
 
-            int valorUsuario = usuario.ObterValorAtributo(atributo);
-            int valorComputador = computador.ObterValorAtributo(atributo);
-
-            return valorUsuario.CompareTo(valorComputador);
+            return usuario.ObterValorAtributo(atributo)
+                .CompareTo(computador.ObterValorAtributo(atributo));
         }
 
         private void ExibirResultadoFinal()

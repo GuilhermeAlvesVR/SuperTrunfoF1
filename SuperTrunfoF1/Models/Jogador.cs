@@ -2,11 +2,11 @@
 {
     public class Jogador
     {
-        public string Nome { get; private set; }
+        private List<Piloto> _cartas;
+
+        public string Nome { get; }
         public IReadOnlyList<Piloto> Cartas => _cartas;
         public int Pontuacao { get; private set; }
-
-        private List<Piloto> _cartas;
 
         public Jogador(string nome)
         {
@@ -22,6 +22,7 @@
         {
             if (carta == null)
                 throw new ArgumentNullException(nameof(carta), "A carta não pode ser nula.");
+
             _cartas.Add(carta);
         }
 
