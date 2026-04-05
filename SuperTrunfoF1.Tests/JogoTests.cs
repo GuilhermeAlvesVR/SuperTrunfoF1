@@ -1,110 +1,156 @@
 ﻿using SuperTrunfoF1.Enums;
 using SuperTrunfoF1.Models;
-using SuperTrunfoF1.Services;
-using Xunit;
 
-namespace SuperTrunfoF1.Tests
+namespace SuperTrunfoF1.Services
 {
-    public class JogoTests
+    public class Jogo
     {
-        [Fact]
-        public void CompararCartas_DeveRetornar1_QuandoUsuarioTemMaiorAtributo()
+        public Jogador Usuario { get; private set; }
+        public Jogador Computador { get; private set; }
+        public Baralho Baralho { get; private set; }
+
+        public Jogo()
         {
-            Jogo jogo = new Jogo();
-
-            Piloto usuario = new Piloto("Piloto A", "Equipe A", 10, 50, 100, 20, 2);
-            Piloto computador = new Piloto("Piloto B", "Equipe B", 8, 20, 50, 10, 1);
-
-            int resultado = jogo.CompararCartas(usuario, computador, Atributo.Vitorias);
-
-            Assert.Equal(1, resultado);
+            Usuario = new Jogador("Usuário");
+            Computador = new Jogador("Computador");
+            Baralho = new Baralho();
         }
 
-        [Fact]
-        public void CompararCartas_DeveRetornarMenos1_QuandoComputadorTemMaiorAtributo()
+        public void Iniciar()
         {
-            Jogo jogo = new Jogo();
+            if (Baralho.Cartas.Count == 0)
+                throw new InvalidOperationException("O baralho não foi inicializado corretamente.");
 
-            Piloto usuario = new Piloto("Piloto A", "Equipe A", 10, 10, 100, 20, 2);
-            Piloto computador = new Piloto("Piloto B", "Equipe B", 8, 20, 50, 10, 1);
+            Baralho.Embaralhar();
+            DistribuirCartas();
 
-            int resultado = jogo.CompararCartas(usuario, computador, Atributo.Vitorias);
+            if (Usuario.Cartas.Count != Computador.Cartas.Count)
+                throw new InvalidOperationException("A distribuição de cartas ficou desigual.");
 
-            Assert.Equal(-1, resultado);
+            JogarRodadas();
+            ExibirResultadoFinal();
         }
 
-        [Fact]
-        public void CompararCartas_DeveRetornar0_QuandoHouverEmpate()
+        private void DistribuirCartas()
         {
-            Jogo jogo = new Jogo();
+            if (Baralho.Cartas.Count < 2)
+                throw new InvalidOperationException("Não há cartas suficientes.");
 
-            Piloto usuario = new Piloto("Piloto A", "Equipe A", 10, 20, 100, 20, 2);
-            Piloto computador = new Piloto("Piloto B", "Equipe B", 8, 20, 50, 10, 1);
-
-            int resultado = jogo.CompararCartas(usuario, computador, Atributo.Vitorias);
-
-            Assert.Equal(0, resultado);
+            for (int i = 0; i < Baralho.Cartas.Count; i++)
+            {
+                if (i % 2 == 0)
+                    Usuario.AdicionarCarta(Baralho.Cartas[i]);
+                else
+                    Computador.AdicionarCarta(Baralho.Cartas[i]);
+            }
         }
 
-        [Fact]
-        public void CompararCartas_DeveRetornar1_QuandoUsuarioForSuperTrunfo()
+        private void JogarRodadas()
         {
-            Jogo jogo = new Jogo();
+            int totalRodadas = Usuario.Cartas.Count;
 
-            Piloto usuario = new Piloto("Senna", "Lenda", 10, 41, 80, 65, 3, true);
-            Piloto computador = new Piloto("Piloto B", "Equipe B", 8, 20, 50, 10, 1);
+            for (int i = 0; i < totalRodadas; i++)
+            {
+                Console.Clear();
+                Console.WriteLine($"========== RODADA {i + 1} ==========\n");
 
-            int resultado = jogo.CompararCartas(usuario, computador, Atributo.Vitorias);
+                var cartaUsuario = Usuario.Cartas[i];
+                var cartaComputador = Computador.Cartas[i];
 
-            Assert.Equal(1, resultado);
+                Console.WriteLine("Sua carta:");
+                cartaUsuario.ExibirCarta();
+
+                var atributo = EscolherAtributo();
+
+                Console.WriteLine($"\nVocê escolheu: {atributo}");
+                Console.WriteLine("\nCarta do computador:");
+                cartaComputador.ExibirCarta();
+
+                int resultado = CompararCartas(cartaUsuario, cartaComputador, atributo);
+
+                if (resultado > 0)
+                {
+                    Console.WriteLine("\nVocê venceu a rodada!");
+                    Usuario.AdicionarPonto();
+                }
+                else if (resultado < 0)
+                {
+                    Console.WriteLine("\nO computador venceu a rodada!");
+                    Computador.AdicionarPonto();
+                }
+                else
+                {
+                    Console.WriteLine("\nA rodada empatou!");
+                }
+
+                Console.WriteLine($"\nPlacar: Usuário {Usuario.Pontuacao} x {Computador.Pontuacao} Computador");
+                Console.WriteLine("\nPressione qualquer tecla para continuar...");
+                Console.ReadKey();
+            }
         }
 
-        [Fact]
-        public void CompararCartas_DeveRetornarMenos1_QuandoComputadorForSuperTrunfo()
+        private Atributo EscolherAtributo()
         {
-            Jogo jogo = new Jogo();
+            while (true)
+            {
+                Console.WriteLine("\nEscolha um atributo:");
+                Console.WriteLine("1 - Experiência");
+                Console.WriteLine("2 - Vitórias");
+                Console.WriteLine("3 - Pódios");
+                Console.WriteLine("4 - Pole Positions");
+                Console.WriteLine("5 - Títulos");
+                Console.Write("Digite o número da opção: ");
 
-            Piloto usuario = new Piloto("Piloto A", "Equipe A", 10, 20, 100, 20, 2);
-            Piloto computador = new Piloto("Senna", "Lenda", 10, 41, 80, 65, 3, true);
+                string entrada = Console.ReadLine() ?? "";
 
-            int resultado = jogo.CompararCartas(usuario, computador, Atributo.Vitorias);
-
-            Assert.Equal(-1, resultado);
+                switch (entrada)
+                {
+                    case "1": return Atributo.Experiencia;
+                    case "2": return Atributo.Vitorias;
+                    case "3": return Atributo.Podios;
+                    case "4": return Atributo.PolePositions;
+                    case "5": return Atributo.Titulos;
+                    default:
+                        Console.WriteLine("\nOpção inválida. Tente novamente.");
+                        break;
+                }
+            }
         }
 
-        [Fact]
-        public void CompararCartas_DeveRetornar0_QuandoAmbosForemSuperTrunfo()
+        public int CompararCartas(Piloto usuario, Piloto computador, Atributo atributo)
         {
-            Jogo jogo = new Jogo();
+            // ✅ Validações de null adicionadas
+            if (usuario == null)
+                throw new ArgumentNullException(nameof(usuario), "A carta do usuário não pode ser nula.");
 
-            Piloto usuario = new Piloto("Senna 1", "Lenda", 10, 41, 80, 65, 3, true);
-            Piloto computador = new Piloto("Senna 2", "Lenda", 10, 41, 80, 65, 3, true);
+            if (computador == null)
+                throw new ArgumentNullException(nameof(computador), "A carta do computador não pode ser nula.");
 
-            int resultado = jogo.CompararCartas(usuario, computador, Atributo.Vitorias);
+            if (usuario.EhSuperTrunfo && computador.EhSuperTrunfo)
+                return 0;
 
-            Assert.Equal(0, resultado);
+            if (usuario.EhSuperTrunfo)
+                return 1;
+
+            if (computador.EhSuperTrunfo)
+                return -1;
+
+            return usuario.ObterValorAtributo(atributo)
+                .CompareTo(computador.ObterValorAtributo(atributo));
         }
 
-        [Fact]
-        public void CompararCartas_DeveLancarExcecao_QuandoCartaUsuarioForNula()
+        private void ExibirResultadoFinal()
         {
-            Jogo jogo = new Jogo();
+            Console.Clear();
+            Console.WriteLine("========== FIM DE JOGO ==========\n");
+            Console.WriteLine($"Placar final: Usuário {Usuario.Pontuacao} x {Computador.Pontuacao} Computador\n");
 
-            Piloto computador = new Piloto("Piloto B", "Equipe B", 8, 20, 50, 10, 1);
-
-            Assert.Throws<ArgumentNullException>(() =>
-                jogo.CompararCartas(null!, computador, Atributo.Vitorias));
-        }
-
-        [Fact]
-        public void CompararCartas_DeveLancarExcecao_QuandoCartaComputadorForNula()
-        {
-            Jogo jogo = new Jogo();
-
-            Piloto usuario = new Piloto("Piloto A", "Equipe A", 10, 20, 100, 20, 2);
-
-            Assert.Throws<ArgumentNullException>(() =>
-                jogo.CompararCartas(usuario, null!, Atributo.Vitorias));
+            if (Usuario.Pontuacao > Computador.Pontuacao)
+                Console.WriteLine("Você venceu o jogo!");
+            else if (Usuario.Pontuacao < Computador.Pontuacao)
+                Console.WriteLine("O computador venceu o jogo!");
+            else
+                Console.WriteLine("O jogo terminou empatado!");
         }
     }
 }

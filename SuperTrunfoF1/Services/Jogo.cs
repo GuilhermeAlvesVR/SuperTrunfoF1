@@ -119,6 +119,13 @@ namespace SuperTrunfoF1.Services
 
         public int CompararCartas(Piloto usuario, Piloto computador, Atributo atributo)
         {
+            // ✅ Validações de null adicionadas
+            if (usuario == null)
+                throw new ArgumentNullException(nameof(usuario), "A carta do usuário não pode ser nula.");
+
+            if (computador == null)
+                throw new ArgumentNullException(nameof(computador), "A carta do computador não pode ser nula.");
+
             if (usuario.EhSuperTrunfo && computador.EhSuperTrunfo)
                 return 0;
 
