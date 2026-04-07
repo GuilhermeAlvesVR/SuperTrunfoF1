@@ -32,7 +32,7 @@ namespace SuperTrunfoF1.Services
                 new Piloto("Alexander Albon", "Williams", 6, 0, 2, 0, 0),
                 new Piloto("Lance Stroll", "Aston Martin", 7, 0, 3, 1, 0),
                 new Piloto("Nico Hulkenberg", "Sauber", 10, 0, 1, 1, 0),
-                
+                new Piloto("Yuki Tsunoda", "RB", 4, 0, 1, 0, 0),
                 new Piloto("Guanyu Zhou", "Sauber", 3, 0, 0, 0, 0),
                 new Piloto("Kevin Magnussen", "Haas", 9, 0, 1, 1, 0),
                 new Piloto("Daniel Ricciardo", "RB", 13, 8, 32, 3, 0),
